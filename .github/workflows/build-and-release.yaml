@@ -53,7 +53,7 @@ jobs:
         run: |
           cat > build-info.json <<EOF
           {
-            "name":  "drivers",
+            "package-name":  "drivers",
             "description" : "Driver tools for Apio",
             "target-platform": "windows-amd64",
             "release-tag":  "$RELEASE_TAG",
