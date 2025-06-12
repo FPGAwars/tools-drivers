@@ -49,7 +49,7 @@ jobs:
           echo $package_name
           echo "PACKAGE_NAME=$package_name" >> $GITHUB_ENV
 
-      - name: Create the build-info.json file
+      - name: Create the build info file
         run: |
           cat > build-info.json <<EOF
           {
@@ -75,9 +75,13 @@ jobs:
           json-align --in-place --spaces 2 build-info.json
           cat -n build-info.json
 
+      - name: Copy the build info to the package
+        run: |
+          cp build-info.json package/BUILD-INFO.json
+          cat package/BUILD-INFO.json
+
       - name: Compress the package directory
         run: |
-          # pushd this-repo/package
           pushd package
           tar zcf ../${PACKAGE_NAME} ./*
           popd
@@ -112,4 +116,3 @@ jobs:
           fail_on_unmatched_files: true
           files: |
             apio-drivers-windows-amd64-${{env.PACKAGE_TAG}}.tgz
-
