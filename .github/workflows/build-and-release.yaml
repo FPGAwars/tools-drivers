@@ -45,7 +45,7 @@ jobs:
 
       - name: Determine package file name
         run: |
-          package_name="apio-drivers-windows-amd64-${PACKAGE_TAG}.tar.gz"
+          package_name="apio-drivers-windows-amd64-${PACKAGE_TAG}.tgz"
           echo $package_name
           echo "PACKAGE_NAME=$package_name" >> $GITHUB_ENV
 
@@ -111,4 +111,5 @@ jobs:
           preserve_order: true
           fail_on_unmatched_files: true
           files: |
-            ${{env.PACKAGE_NAME}}
+            apio-drivers-windows-amd64-${{env.PACKAGE_TAG}}.tgz
+
