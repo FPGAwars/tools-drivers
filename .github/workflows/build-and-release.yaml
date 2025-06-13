@@ -1,0 +1,118 @@
+name: "build-and-release"
+
+on:
+  # Run on each commit to this repo.
+  push:
+
+  # Run daily at 10AM UTC
+  schedule:
+    - cron: "0 10 * * *"
+
+  # Allow manual activations.
+  workflow_dispatch:
+
+permissions:
+  # Allow release creation
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      # E.g. "2025-11-02"
+      - name: Determine release tag
+        run: |
+          release_tag="$(date +'%Y-%m-%d')"
+          echo $release_tag
+          echo "RELEASE_TAG=$release_tag" >> $GITHUB_ENV
+
+      # E.g. "20251102"
+      - name: Determine package tag
+        run: |
+          package_tag="${RELEASE_TAG//-/}"
+          echo $package_tag
+          echo "PACKAGE_TAG=$package_tag" >> $GITHUB_ENV
+
+      - name: Determine last commit
+        run: |
+          commit=$(git rev-parse HEAD)
+          echo $commit
+          echo "RELEASE_COMMIT=$commit" >> $GITHUB_ENV
+
+      - name: Determine package file name
+        run: |
+          package_name="apio-drivers-windows-amd64-${PACKAGE_TAG}.tgz"
+          echo $package_name
+          echo "PACKAGE_NAME=$package_name" >> $GITHUB_ENV
+
+      - name: Create the build info file
+        run: |
+          cat > build-info.json <<EOF
+          {
+            "package-name":  "drivers",
+            "description" : "Driver tools for Apio",
+            "target-platform": "windows-amd64",
+            "release-tag":  "$RELEASE_TAG",
+            "build-repo":  "${{github.repository}}",
+            "build-workflow":  "${{ github.workflow }}",
+            "workflow-run-id":  "${{github.run_id}}",
+            "workflow-run-number": "${{github.run_number}}",
+            "build-time":  "$(date +'%Y-%m-%d %H:%M:%S %Z')",
+            "commit":  "$RELEASE_COMMIT",
+            "file-name":  "$PACKAGE_NAME"
+          }
+          EOF
+
+          cat -n build-info.json
+
+      - name: Format build info
+        run: |
+          npm install -g json-align
+          json-align --in-place --spaces 2 build-info.json
+          cat -n build-info.json
+
+      - name: Copy the build info to the package
+        run: |
+          cp build-info.json package/BUILD-INFO.json
+          cat package/BUILD-INFO.json
+
+      - name: Compress the package directory
+        run: |
+          pushd package
+          tar zcf ../${PACKAGE_NAME} ./*
+          popd
+          ls -al
+
+      - name: Prepare release text
+        run: |
+          cat  > RELEASE_BODY.txt <<EOF
+          This is an automated build-and-release.
+
+          Build info:
+          \`\`\`
+          $(tr -d '",{}' < build-info.json)
+          \`\`\`
+          EOF
+
+          cat -n $out
+
+      # In case we overwrite and exiting release.
+      - name: Force tag update
+        run: |
+          git tag -f ${{env.RELEASE_TAG}}
+          git push origin -f ${{env.RELEASE_TAG}}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2.2.2
+        with:
+          tag_name: ${{env.RELEASE_TAG}}
+          name: ${{env.RELEASE_TAG}}
+          body_path: RELEASE_BODY.txt
+          preserve_order: true
+          fail_on_unmatched_files: true
+          files: |
+            apio-drivers-windows-amd64-${{env.PACKAGE_TAG}}.tgz

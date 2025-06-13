@@ -1,9 +1,18 @@
 # Tools-drivers
 
-[Apio](https://github.com/FPGAwars/apio) package that contains the tools to install the FPGA drivers ([Zadig](http://zadig.akeo.ie) and [Virtual Serial](https://www.pjrc.com/teensy/serial_install.exe)). Only for Windows.
+[Apio](https://github.com/FPGAwars/apio) package that contains the drivers and tool for Windows.
 
-### Versions
-* [1.3.0](https://github.com/FPGAwars/tools-drivers/releases/tag/v1.3.0)  
-* [1.2.0](https://github.com/FPGAwars/tools-drivers/releases/tag/v1.2.0)  
-* [1.1.0](https://github.com/FPGAwars/tools-drivers/releases/tag/v1.1.0)  
-* [1.0.0](https://github.com/FPGAwars/tools-drivers/releases/tag/v1.0.0)  
+```
+package/
+├── bin
+│   ├── ftdi_eeprom.exe
+│   ├── lsftdi.exe
+│   ├── lsusb.exe
+│   ├── serial_install.exe
+│   └── zadig.exe
+├── package.json
+└── share
+    └── zadig.ini
+```
+
+The director 'package' is compressed as the 'drivers' package file.
