@@ -1,5 +1,10 @@
 # Tools-drivers
 
+> **Note:** Please **do not** open issues in this repository.
+> For any questions, discussions, or bug reports, use the [main Apio repository](https://github.com/FPGAwars/apio).
+
+
+
 [Apio](https://github.com/FPGAwars/apio) package that contains the drivers and tool for Windows.
 
 ```
