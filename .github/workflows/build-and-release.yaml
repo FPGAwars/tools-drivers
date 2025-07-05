@@ -23,6 +23,13 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4
 
+      - name: Install anti virus (ClamAV)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clamav clamav-daemon
+          sudo systemctl stop clamav-freshclam || true
+          sudo freshclam --verbose
+
       # E.g. "2025-11-02"
       - name: Determine release tag
         run: |
@@ -105,6 +112,12 @@ jobs:
         run: |
           git tag -f ${{env.RELEASE_TAG}}
           git push origin -f ${{env.RELEASE_TAG}}
+
+      # Scans recursively inside the .tgz packages.
+      # See https://linux.die.net/man/1/clamscan
+      - name: Scan the packages for viruses
+        run: |
+          clamscan -r --verbose --scan-archive=yes apio-drivers-*.tgz
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2.2.2
