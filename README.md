@@ -26,3 +26,10 @@ package/
 ```
 
 The director 'package' is compressed as the 'drivers' package file.
+
+
+## License
+
+The Apio project itself is licensed under the GNU General Public License version 3.0 (GPL-3.0).
+Pre-built packages may include third-party tools and components, which are subject to their
+respective license terms.
