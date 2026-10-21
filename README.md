@@ -16,8 +16,6 @@ This is an [Apio](https://github.com/FPGAwars/apio) package that contains the dr
 package/
 ├── bin
 │   ├── ftdi_eeprom.exe
-│   ├── lsftdi.exe
-│   ├── lsusb.exe
 │   ├── serial_install.exe
 │   └── zadig.exe
 ├── package.json
